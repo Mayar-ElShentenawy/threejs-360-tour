@@ -1,0 +1,192 @@
+<html>
+<head>
+	<script src="three.min.js"></script>
+	<script src="OrbitControls.js"></script>
+	<style>
+		.menu {
+			position: fixed;
+			top: 25px;
+			right: 25px;
+		}
+		.menuu {
+			position: fixed;
+			left: 20px;
+			bottom: 230px;
+		}
+		button {
+			margin-bottom: 10px;
+			width: 150px;
+			font-size: 18px;
+			background: black;
+			color: white;
+			border: none;
+			opacity: .5;
+		}
+	
+	
+			.dropbtn {
+			  background-color: #0088C3;
+			  color: white;
+			  padding: 16px;
+			  font-size: 16px;
+			  border: none;
+			  text-align: left;
+
+			}
+
+			.dropdown {
+			  position: fixed;
+			  left: 10px;
+			  top: 10px;
+			  display: inline-block;
+			  
+			}
+
+			.dropdown-content {
+			  display: none;
+			  position: absolute;
+			  background-color: #f1f1f1;
+			  min-width: 160px;
+			  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+			  z-index: 1;
+			}
+
+			.dropdown-content a {
+			  color: black;
+			  padding: 12px 16px;
+			  text-decoration: none;
+			  display: block;
+			}
+
+			.dropdown-content a:hover {background-color: #ddd;}
+
+			.dropdown:hover .dropdown-content {display: block;}
+
+			.dropdown:hover .dropbtn {background-color: #0088C3;}
+	</style>
+</head>
+<body>
+  <div class="menu">
+
+    <button onclick="EntranceClick()">Entrance</button>
+    <button onclick="MonalisaClick()">Mona Lisa Hall</button>
+    <button onclick="MainHallClick()">Main Hall</button>
+    <button onclick="Hall2Click()">Hall 2</button>
+
+  </div>
+
+  	<div class="menuu">
+		<button onClick="window.location.href='http://localhost/skybox/sultanahmet.html';">  
+		Go to Sultan Ahmet Mosque
+		</button>
+		
+	</div>
+  <div class="dropdown">
+  <button class="dropbtn">INFO</button>
+  <div class="dropdown-content">
+    <p> The Louvre is the world's largest museum and houses one of the most impressive art collections in history. The magnificent, baroque-style palace and museum — LeMusée du Louvre in French — sits along the banks of the Seine River in Paris. </p><a href="https://www.louvre.fr/en"></a>
+    <p>The Mona Lisa is a half-length portrait painting by Italian artist Leonardo da Vinci. Considered an archetypal masterpiece of the Italian Renaissance, it has been described as "the best known, the most visited, the most written about, the most sung about, the most parodied work of art in the world". <a href="https://monalisa.org/"></a></p>
+  </div>
+</div>
+
+  <canvas id="scene"></canvas>
+
+	<script>
+		
+		skyboxImage = 'Entrance';
+
+		var ww = window.innerWidth,
+		wh = window.innerHeight;
+		
+		function init() {
+			renderer = new THREE.WebGLRenderer({canvas : document.getElementById('scene')});
+			renderer.setClearColor(0x000000);
+			renderer.setSize(ww,wh);
+
+			scene = new THREE.Scene();
+
+			camera = new THREE.PerspectiveCamera(  55, ww/wh,45,30000);
+			camera.position.set(2000, -2000,0);
+			
+			controls = new THREE.OrbitControls(camera);
+
+
+
+light = new THREE.DirectionalLight(0xffffff, 1);
+			light.position.set(0, 250, 700);
+			scene.add(light);
+
+			createMaterialArray(skyboxImage);
+
+			skyboxGeo = new THREE.BoxGeometry(10000, 10000, 10000);
+			skybox = new THREE.Mesh(skyboxGeo, materialArray);
+
+			scene.add(skybox);
+			
+		
+			animate();
+			
+		}
+		
+		function createMaterialArray(filename) 
+		{
+			const skyboxImagepaths = [
+									filename +'/'+ filename+ 'Bottom.jpg',
+									filename +'/'+ filename+ 'Back.jpg',
+									filename +'/'+ filename+ 'Top.jpg',
+									filename +'/'+ filename+ 'Front.jpg',
+									filename +'/'+ filename+ 'Right.jpg',
+									filename +'/'+ filename+ 'Left.jpg'];
+			materialArray=new Array();
+
+			for(i=0;i<skyboxImagepaths.length;i++){
+				texture = new THREE.TextureLoader().load(skyboxImagepaths[i]);
+				materialArray[i]=new THREE.MeshBasicMaterial({ map: texture, side: THREE.BackSide });
+			}
+			
+			return materialArray;
+		}
+		
+		function animate() {
+			window.requestAnimationFrame(animate);
+			//camera.rotation.y+=0.001;
+			renderer.render(scene, camera);
+		}
+		
+	
+
+		function switchSkyBox (skyboxName) {
+			scene.remove(skybox);
+			skyboxImage = skyboxName;
+			materialArray = createMaterialArray(skyboxImage);
+			skybox = new THREE.Mesh(skyboxGeo, materialArray);
+			scene.add(skybox);
+		}
+		
+		
+
+		function EntranceClick(){
+		
+			switchSkyBox('Entrance');
+		}
+		
+		function MonalisaClick(){
+			
+			switchSkyBox('MonalisaHall');
+		}
+		
+		function MainHallClick(){
+
+			switchSkyBox('MainHall');
+		}
+
+			function Hall2Click(){
+
+			switchSkyBox('Hall2');
+		}
+
+		
+		init();
+	</script>
+</body>
+</html>
